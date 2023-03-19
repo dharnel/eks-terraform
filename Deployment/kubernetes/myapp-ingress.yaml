@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress2
+  namespace: myapp
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/issuer: letsencrypt-prod
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '120'
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  defaultBackend:
+    service:
+      name: my-laravel-app
+      port:
+        number: 80
+  tls:
+  - hosts:
+    - myapp2.niellaravelapp.me
+    secretName: tls-secret
+  rules:
+  - host: myapp2.niellaravelapp.me
+    http:
+      paths:
+      - path: /laravel
+        pathType: Prefix
+        backend:
+          service:
+            name: my-laravel-app
+            port:
+              number: 80

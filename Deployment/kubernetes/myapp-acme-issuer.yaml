@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+  namespace: myapp
+spec:
+  acme:
+    email: dharnel2863@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - selector:
+        dnsZones:
+          - "niellaravelapp.me"
+      dns01:
+        route53:
+          region: eu-west-2
+          accessKeyID: AKIATBF5UWBQHVDPQUUV
+          secretAccessKeySecretRef:
+            name: route53-secret
+            key: secret-access-key

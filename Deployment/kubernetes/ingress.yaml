@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress
+  namespace: sock-shop
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/issuer: letsencrypt-prod
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '120'
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  defaultBackend:
+    service:
+      name: front-end
+      port:
+        number: 80
+  tls:
+  - hosts:
+    - myapp1.niellaravelapp.me
+    secretName: tls-secret
+  rules:
+  - host: myapp1.niellaravelapp.me
+    http:
+      paths:
+      - path: /front-end
+        pathType: Prefix
+        backend:
+          service:
+            name: front-end
+            port:
+              number: 80
+      - path: /carts
+        pathType: Prefix
+        backend:
+          service:
+            name: carts
+            port:
+              number: 80
+      - path: /catalogue
+        pathType: Prefix
+        backend:
+          service:
+            name: catalogue
+            port:
+              number: 80
+      - path: /orders
+        pathType: Prefix
+        backend:
+          service:
+            name: orders
+            port:
+              number: 80
+      - path: /payment
+        pathType: Prefix
+        backend:
+          service:
+            name: payment
+            port:
+              number: 80
+      - path: /queue-master
+        pathType: Prefix
+        backend:
+          service:
+            name: queue-master 
+            port:
+              number: 80
+      - path: /rabbitmq
+        pathType: Prefix
+        backend:
+          service:
+            name: rabbitmq
+            port:
+              number: 5672
+      - path: /shipping
+        pathType: Prefix
+        backend:
+          service:
+            name: shipping
+            port:
+              number: 80
+      - path: /user
+        pathType: Prefix
+        backend:
+          service:
+            name: user
+            port:
+              number: 80

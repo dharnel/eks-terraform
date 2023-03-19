@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  DATABASE_HOST: db
+  DATABASE_NAME: micro_blog_development
+  DATABASE_USER: sammy
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: web-env
+  name: env
+  namespace: myapp

@@ -1,0 +1,105 @@
+pipeline {
+    agent any
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION = "eu-west-2"
+    }
+    stages {
+        stage("Create an EKS Cluster") {
+            steps {
+                script {
+                    dir('terraform') {
+                        sh "terraform init"
+                        sh "terraform apply -auto-approve"
+                    }
+                }
+            }
+        }
+        stage("Deploy to EKS") {
+            steps {
+                script {
+                    dir('kubernetes') {
+                        sh "aws eks update-kubeconfig --name my_K8s_cluster-cluster"
+                        sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/aws/deploy.yaml"
+                        sh "kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
+                        sh "kubectl apply -f complete-demo.yaml"
+                        sh "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
+                        sh "kubectl create secret generic route53-secret --namespace=sock-shop --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
+                        sh "kubectl apply -f acme-issuer.yaml"
+                        sh "kubectl apply -f certificate.yaml"
+                        sh "kubectl apply -f ingress.yaml"
+                        sh "OIDC=$(aws eks describe-cluster --name my-K8s-cluster --query "cluster.identity.oidc.issuer" --output text)"
+                        sh "OIDC_ID=${OIDC: -32}"
+                        sh "cat > aws-ebs-csi-driver-trust-policy.json <<EOF
+> {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::208703631456:oidc-provider/oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:aud": "sts.amazonaws.com",
+          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+        }
+      }
+    }
+  ]
+}
+> EOF"
+
+                          sh "aws iam create-role \
+  --role-name AmazonEKS_EBS_CSI_DriverRole \
+  --assume-role-policy-document file://"aws-ebs-csi-driver-trust-policy.json""
+                           
+                           sh "aws iam attach-role-policy \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+  --role-name AmazonEKS_EBS_CSI_DriverRole"
+                            sh "kubectl annotate serviceaccount ebs-csi-controller-sa \
+    -n kube-system \
+    eks.amazonaws.com/role-arn=arn:aws:iam::208703631456:role/AmazonEKS_EBS_CSI_DriverRole"
+
+                            sh "kubectl rollout restart deployment ebs-csi-controller -n kube-system"
+
+                            sh "aws eks create-addon --cluster-name my-K8s-cluster --addon-name aws-ebs-csi-driver   --service-account-role-arn arn:aws:iam::208703631456:role/AmazonEKS_EBS_CSI_DriverRole"
+
+                            sh "aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy --user-name terraform-user"
+
+                            sh "kubectl apply -f secret.yaml"
+
+                            sh "kubectl apply -f laravel-dep"
+
+                            sh "kubectl create secret generic route53-secret --namespace=myapp --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
+
+                            sh "kubectl apply -f myapp-acme-issuer.yaml"
+
+                            sh "kubectl apply -f myapp-certificate.yaml"
+
+                            sh "kubectl apply -f myapp-ingress.yaml"
+
+                            sh "kubectl create -f 00-monitoring-ns.yaml"
+
+                            sh "kubectl apply $(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')"
+
+                            sh "kubectl apply $(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)"
+
+                            sh "kubectl create secret generic route53-secret --namespace=monitoring --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
+
+                            sh "monitoring-acme-issuer.yaml"
+
+                            sh "monitoring-certificate.yaml"
+
+                            sh "kubectl apply -f 23-grafana-import-dash-batch.yaml"
+
+                            sh "monitoring-ingress.yaml"
+                        
+                    }
+                }
+            }
+        }
+    }
+}
