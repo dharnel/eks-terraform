@@ -18,11 +18,7 @@ pipeline {
         
         stage('Terraform Apply'){
             steps{
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: "ilab-aws",
-                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                withAWS(credentials: 'ilab-aws', region: 'eu-west-2') {
                 script {
                     dir('Deployment/terraform') {
                         sh 'terraform apply --auto-approve'
