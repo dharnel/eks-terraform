@@ -85,9 +85,9 @@ EOF
 
                             sh "kubectl create -f 00-monitoring-ns.yaml"
 
-                            sh "kubectl apply $(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')"
+                            sh "kubectl apply `ls *-prometheus-*.yaml | awk ' { print " -f " $1 } '`"
 
-                            sh "kubectl apply $(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)"
+                            sh "kubectl apply `ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import`"
 
                             sh "kubectl create secret generic route53-secret --namespace=monitoring --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
 
