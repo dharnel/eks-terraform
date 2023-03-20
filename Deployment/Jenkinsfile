@@ -11,8 +11,19 @@ pipeline {
                 script {
                     dir('Deployment/terraform') {
                         sh "terraform init"
-                        sh "terraform apply -auto-approve"
                     }
+                }
+            }
+        }
+        
+        stage('Terraform Apply'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: "ilab-aws",
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                sh 'terraform apply --auto-approve'
                 }
             }
         }
