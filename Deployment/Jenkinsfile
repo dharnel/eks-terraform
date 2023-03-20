@@ -31,8 +31,7 @@ pipeline {
                         sh "kubectl apply -f ingress.yaml"
                         sh "OIDC=`aws eks describe-cluster --name my-K8s-cluster --query "cluster.identity.oidc.issuer" --output text`"
                         sh "OIDC_ID=${OIDC: -32}"
-                        sh "cat > aws-ebs-csi-driver-trust-policy.json <<EOF
-> {
+                        sh "cat > aws-ebs-csi-driver-trust-policy.json <<EOF {
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -50,7 +49,7 @@ pipeline {
     }
   ]
 }
-> EOF"
+EOF"
 
                           sh "aws iam create-role \
   --role-name AmazonEKS_EBS_CSI_DriverRole \
