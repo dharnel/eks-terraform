@@ -1,13 +1,3 @@
-variable "access_key" {
-    type = string
-    sensitive = true
-}
-
-variable "secret_key" {
-    type = string
-    sensitive = true
-}
-
 variable "region" {
   description = "The aws region. https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
   type        = string
