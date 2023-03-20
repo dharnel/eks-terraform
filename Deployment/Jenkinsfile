@@ -21,7 +21,7 @@ pipeline {
                 withAWS(credentials: 'ilab-aws', region: 'eu-west-2') {
                 script {
                     dir('Deployment/terraform') {
-                        sh 'terraform apply --auto-approve'
+                        sh 'terraform apply --auto-approve -lock=false'
                     }
                 }
                 }
