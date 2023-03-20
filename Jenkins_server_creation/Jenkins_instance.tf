@@ -1,20 +1,20 @@
 #get recent ami
-data "aws_ami" "ubuntu" {
+data "aws_ami" "latest-amazon-linux-image" {
   most_recent = true
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-  owners = ["099720109477"] # Canonical
+  owners = ["amazon"] 
 }
 
 #create instances
 resource "aws_instance" "jenkins_server" {
-  ami           = data.aws_ami.ubuntu.id
+  ami           = data.aws_ami.latest-amazon-linux-image.id
   instance_type = var.instance
   security_groups    = [aws_security_group.jenkins_server.id]
   key_name       =  "instance-key"
