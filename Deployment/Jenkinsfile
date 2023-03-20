@@ -9,7 +9,7 @@ pipeline {
         stage("Create an EKS Cluster") {
             steps {
                 script {
-                    dir('terraform') {
+                    dir('Deployment/terraform') {
                         sh "terraform init"
                         sh "terraform apply -auto-approve"
                     }
@@ -19,7 +19,7 @@ pipeline {
         stage("Deploy to EKS") {
             steps {
                 script {
-                    dir('kubernetes') {
+                    dir('Deployment/kubernetes') {
                         sh "aws eks update-kubeconfig --name my_K8s_cluster-cluster"
                         sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/aws/deploy.yaml"
                         sh "kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
