@@ -3,7 +3,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION = "eu-west-2"
+        AWS_DEFAULT_REGION = "us-east-2"
     }
     stages {
         stage("Create an EKS Cluster") {
@@ -18,7 +18,7 @@ pipeline {
         
         stage('Terraform Apply'){
             steps{
-                withAWS(credentials: 'ilab-aws', region: 'eu-west-2') {
+                withAWS(credentials: 'ilab-aws', region: 'us-east-2') {
                 script {
                     dir('Deployment/terraform') {
                         sh 'terraform apply --auto-approve -lock=false'
@@ -28,9 +28,10 @@ pipeline {
             }
         }
         stage("Deploy to EKS") {
-            steps {
+            steps{
+                withAWS(credentials: 'ilab-aws', region: 'us-east-2') {
                 script {
-                    dir('Deployment/kubernetes') {
+                    dir('Deployment/terraform') {
                         sh "aws eks update-kubeconfig --name my_K8s_cluster-cluster"
                         sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/aws/deploy.yaml"
                         sh "kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
@@ -50,13 +51,13 @@ cat > aws-ebs-csi-driver-trust-policy.json <<EOF
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::208703631456:oidc-provider/oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}"
+        "Federated": "arn:aws:iam::208703631456:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/${OIDC_ID}"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:aud": "sts.amazonaws.com",
-          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+          "oidc.eks.us-east-2.amazonaws.com/id/${OIDC_ID}:aud": "sts.amazonaws.com",
+          "oidc.eks.us-east-2.amazonaws.com/id/${OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
         }
       }
     }
@@ -112,7 +113,9 @@ EOF
                         
                     }
                 }
+                }
             }
         }
+        }
     }
-}
+
