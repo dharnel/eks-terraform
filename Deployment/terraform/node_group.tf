@@ -5,16 +5,18 @@ resource "aws_eks_node_group" "eks_node_group" {
   node_role_arn   = aws_iam_role.eks_node.arn
   subnet_ids      = [aws_subnet.private_az1.id,aws_subnet.private_az2.id]
 
+
   scaling_config {
     desired_size = 2
-    max_size     = 5
-    min_size     = 2
+    max_size     = 3
+    min_size     = 1
   }
 
   ami_type       = "AL2_x86_64" # AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, CUSTOM
   capacity_type  = "ON_DEMAND"  # ON_DEMAND, SPOT
-  instance_types = ["t2.medium"]
+  instance_types = ["t3.medium"]
   disk_size      = 20
+
 
   tags = {
     Name = "${var.cluster_name}-node-group"
@@ -26,10 +28,6 @@ resource "aws_eks_node_group" "eks_node_group" {
     aws_iam_role_policy_attachment.node_AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.node_AmazonEC2ContainerRegistryReadOnly,
   ]
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 

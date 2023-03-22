@@ -1,7 +1,7 @@
 variable "region" {
   description = "The aws region. https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
   type        = string
-  default     = "us-east-2"
+  default     = "eu-west-2"
 }
 
 variable "cluster_name" {
