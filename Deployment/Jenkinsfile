@@ -31,16 +31,16 @@ pipeline {
             steps{
                 withAWS(credentials: 'ilab-aws', region: 'eu-west-2') {
                 script {
-                    dir('Deployment/terraform') {
-                    	sh "aws configure set aws_access_key_id ${env.AWS_ACCESS_KEY_ID}"
-                    	sh "aws configure set aws_secret_access_key ${env.AWS_SECRET_ACCESS_KEY}"
-                    	sh "aws configure set region ${env.AWS_DEFAULT_REGION}"
+                    dir('Deployment/kubernetes') {
+                    	sh 'aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID'
+                    	sh 'aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY"
+                    	sh 'aws configure set region 'AWS_DEFAULT_REGION'
                         sh "aws eks update-kubeconfig --name my-K8s-cluster"
                         sh "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/aws/deploy.yaml"
                         sh "kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
                         sh "kubectl apply -f complete-demo.yaml"
                         sh "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
-                        sh "kubectl create secret generic route53-secret --namespace=sock-shop --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
+                        sh 'kubectl create secret generic route53-secret --namespace=sock-shop --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
                         sh "kubectl apply -f acme-issuer.yaml"
                         sh "kubectl apply -f certificate.yaml"
                         sh "kubectl apply -f ingress.yaml"
@@ -90,7 +90,7 @@ EOF
 
                             sh "kubectl apply -f laravel-dep"
 
-                            sh "kubectl create secret generic route53-secret --namespace=myapp --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
+                            sh 'kubectl create secret generic route53-secret --namespace=myapp --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
 
                             sh "kubectl apply -f myapp-acme-issuer.yaml"
 
@@ -104,7 +104,7 @@ EOF
 
                             sh "kubectl apply `ls *-grafana-*.yaml | awk ' { print " -f " ${1} }'  | grep -v grafana-import`"
 
-                            sh "kubectl create secret generic route53-secret --namespace=monitoring --from-literal=secret-access-key=${env.AWS_SECRET_ACCESS_KEY}"
+                            sh 'kubectl create secret generic route53-secret --namespace=monitoring --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
 
                             sh "monitoring-acme-issuer.yaml"
 
