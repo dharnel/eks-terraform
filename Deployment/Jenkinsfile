@@ -41,8 +41,8 @@ pipeline {
                         sh "kubectl apply -f complete-demo.yaml"
                         sh "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
                         script{
-                            env.OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`
-                            env.OIDC_ID=${env.OIDC.substring(-32,-1)}
+                            env.OIDC=sh(script: 'aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text')
+                            env.OIDC_ID=${OIDC.substring(OIDC.lastIndexOf('/') + 1, OIDC.length())}
                         }
                         
                         sh """
