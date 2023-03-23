@@ -100,7 +100,7 @@ EOF
 
                             
 
-                            sh "kubectl create -f 00-monitoring-ns.yaml"
+                            sh "kubectl create -f prometheus/00-monitoring-ns.yaml"
 
                             sh "kubectl apply -f prometheus"
 
