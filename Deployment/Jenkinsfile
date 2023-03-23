@@ -61,7 +61,7 @@ cat > aws-ebs-csi-driver-trust-policy.json <<EOF
       "Condition": {
         "StringEquals": {
           "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:aud": "sts.amazonaws.com",
-          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa2"
+          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa3"
         }
       }
     }
@@ -78,9 +78,7 @@ EOF
   --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
   --role-name AmazonEKS_EBS_CSI_DriverRole"
   
-                            sh "eksctl create iamserviceaccount   --name ebs-csi-controller-sa2   --namespace kube-system   --cluster my-K8s-cluster   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy   --approve   --role-only   --role-name AmazonEKS_EBS_CSI_DriverRole --override-existing-serviceaccounts"
-  
-                            sh "kubectl annotate serviceaccount ebs-csi-controller-sa2 \
+                            sh "kubectl annotate serviceaccount ebs-csi-controller-sa3 \
     -n kube-system \
     eks.amazonaws.com/role-arn=arn:aws:iam::208703631456:role/AmazonEKS_EBS_CSI_DriverRole"
 
