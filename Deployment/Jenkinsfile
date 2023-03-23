@@ -41,10 +41,8 @@ pipeline {
                         sh "kubectl apply -f complete-demo.yaml"
                         sh "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
                         
-                        sh """
-OIDC=`aws eks describe-cluster --name my-K8s-cluster --query "cluster.identity.oidc.issuer" --output text` \
-
-OIDC_ID=${OIDC: -32} \
+                        sh '''
+OIDC=`aws eks describe-cluster --name my-K8s-cluster --query "cluster.identity.oidc.issuer" --output text` | OIDC_ID=${OIDC: -32} \
 
 cat > aws-ebs-csi-driver-trust-policy.json <<EOF
 {
@@ -66,7 +64,7 @@ cat > aws-ebs-csi-driver-trust-policy.json <<EOF
   ]
 }
 EOF
-"""
+'''
 
                           sh 'aws iam create-role \
   --role-name AmazonEKS_EBS_CSI_DriverRole \
