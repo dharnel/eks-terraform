@@ -40,8 +40,11 @@ pipeline {
                         sh "kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
                         sh "kubectl apply -f complete-demo.yaml"
                         sh "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
-                        sh "env.OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`"
-                        sh "env.OIDC_ID=${env.OIDC.substring(-32,-1)}"
+                        script{
+                            env.OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`
+                            env.OIDC_ID=${env.OIDC.substring(-32,-1)}
+                        }
+                        
                         sh """
 cat > aws-ebs-csi-driver-trust-policy.json <<EOF 
 {
