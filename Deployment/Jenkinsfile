@@ -48,6 +48,16 @@ OIDC_ID=${OIDC: -32} \
 
 eksctl utils associate-iam-oidc-provider --cluster my-K8s-cluster --approve \
 
+cat >my-service-account.yaml <<EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ebs-csi-controller-sa
+  namespace: kube-system
+EOF \
+
+kubectl apply -f my-service-account.yaml \
+
 cat > aws-ebs-csi-driver-trust-policy.json <<EOF
 {
   "Version": "2012-10-17",
