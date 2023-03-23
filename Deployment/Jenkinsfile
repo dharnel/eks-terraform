@@ -46,6 +46,8 @@ OIDC=`aws eks describe-cluster --name my-K8s-cluster --query "cluster.identity.o
 
 OIDC_ID=${OIDC: -32} \
 
+eksctl utils associate-iam-oidc-provider --cluster my-K8s-cluster --approve \
+
 cat > aws-ebs-csi-driver-trust-policy.json <<EOF
 {
   "Version": "2012-10-17",
