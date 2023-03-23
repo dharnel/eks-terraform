@@ -113,9 +113,9 @@ EOF
 
                             sh 'kubectl create secret generic route53-secret --namespace=monitoring --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
 
-                            sh "monitoring-acme-issuer.yaml"
+                            sh "kubectl apply -f monitoring-acme-issuer.yaml"
 
-                            sh "monitoring-certificate.yaml"
+                            sh "kubectl apply -f monitoring-certificate.yaml"
 
                             sh "kubectl apply -f 23-grafana-import-dash-batch.yaml"
                             
@@ -123,7 +123,7 @@ EOF
                             
                             sh "kubectl apply -f myapp-ingress.yaml"
 
-                            sh "monitoring-ingress.yaml"
+                            sh "kubectl apply -f monitoring-ingress.yaml"
                         
                     }
                 }
