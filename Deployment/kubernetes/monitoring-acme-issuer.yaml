@@ -16,7 +16,7 @@ spec:
       dns01:
         route53:
           region: eu-west-2
-          accessKeyID: AKIATBF5UWBQHVDPQUUV
+          accessKeyID: AKIATBF5UWBQJQG3QAN7
           secretAccessKeySecretRef:
             name: route53-secret
             key: secret-access-key
