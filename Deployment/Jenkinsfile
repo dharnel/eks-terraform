@@ -44,8 +44,8 @@ pipeline {
                         sh "kubectl apply -f acme-issuer.yaml"
                         sh "kubectl apply -f certificate.yaml"
                         sh "kubectl apply -f ingress.yaml"
-                        sh "OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`"
-                        sh "OIDC_ID=${OIDC.substring(-32,-1)}"
+                        sh "env.OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`"
+                        sh "env.OIDC_ID=${env.OIDC.substring(-32,-1)}"
                         sh """
 cat > aws-ebs-csi-driver-trust-policy.json <<EOF 
 {
@@ -54,13 +54,13 @@ cat > aws-ebs-csi-driver-trust-policy.json <<EOF
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::208703631456:oidc-provider/oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}"
+        "Federated": "arn:aws:iam::208703631456:oidc-provider/oidc.eks.eu-west-2.amazonaws.com/id/${env.OIDC_ID}"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:aud": "sts.amazonaws.com",
-          "oidc.eks.eu-west-2.amazonaws.com/id/${OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+          "oidc.eks.eu-west-2.amazonaws.com/id/${env.OIDC_ID}:aud": "sts.amazonaws.com",
+          "oidc.eks.eu-west-2.amazonaws.com/id/${env.OIDC_ID}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
         }
       }
     }
