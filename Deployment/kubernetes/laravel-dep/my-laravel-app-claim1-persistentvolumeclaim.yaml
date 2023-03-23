@@ -7,6 +7,7 @@ metadata:
   name: my-laravel-app-claim1
   namespace: myapp
 spec:
+  serviceAccountName: ebs-csi-controller-sa3
   accessModes:
     - ReadWriteOnce
   resources:
