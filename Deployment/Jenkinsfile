@@ -40,10 +40,6 @@ pipeline {
                         sh "kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml"
                         sh "kubectl apply -f complete-demo.yaml"
                         sh "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.9.1/cert-manager.yaml"
-                        sh 'kubectl create secret generic route53-secret --namespace=sock-shop --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
-                        sh "kubectl apply -f acme-issuer.yaml"
-                        sh "kubectl apply -f certificate.yaml"
-                        sh "kubectl apply -f ingress.yaml"
                         sh "env.OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`"
                         sh "env.OIDC_ID=${env.OIDC.substring(-32,-1)}"
                         sh """
@@ -96,13 +92,18 @@ EOF
 
                             sh "kubectl apply -f myapp-certificate.yaml"
 
-                            sh "kubectl apply -f myapp-ingress.yaml"
+                            
 
                             sh "kubectl create -f 00-monitoring-ns.yaml"
 
                             sh "kubectl apply `ls *-prometheus-*.yaml | awk ' { print " -f " ${1} } '`"
 
                             sh "kubectl apply `ls *-grafana-*.yaml | awk ' { print " -f " ${1} }'  | grep -v grafana-import`"
+                            
+                            sh 'kubectl create secret generic route53-secret --namespace=sock-shop --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
+                            sh "kubectl apply -f acme-issuer.yaml"
+                            
+                            sh "kubectl apply -f certificate.yaml"
 
                             sh 'kubectl create secret generic route53-secret --namespace=monitoring --from-literal=secret-access-key=$AWS_SECRET_ACCESS_KEY'
 
@@ -111,6 +112,10 @@ EOF
                             sh "monitoring-certificate.yaml"
 
                             sh "kubectl apply -f 23-grafana-import-dash-batch.yaml"
+                            
+                            sh "kubectl apply -f ingress.yaml"
+                            
+                            sh "kubectl apply -f myapp-ingress.yaml"
 
                             sh "monitoring-ingress.yaml"
                         
