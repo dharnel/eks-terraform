@@ -45,7 +45,7 @@ pipeline {
                         sh "kubectl apply -f certificate.yaml"
                         sh "kubectl apply -f ingress.yaml"
                         sh "OIDC=`aws eks describe-cluster --name my-K8s-cluster --query cluster.identity.oidc.issuer --output text`"
-                        sh "OIDC_ID=${OIDC: -32}"
+                        sh "OIDC_ID=${$OIDC: -32}"
                         sh """
 cat > aws-ebs-csi-driver-trust-policy.json <<EOF 
 {
