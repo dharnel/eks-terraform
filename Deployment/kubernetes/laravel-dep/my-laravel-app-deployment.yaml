@@ -26,33 +26,33 @@ spec:
         io.kompose.service: my-laravel-app
     spec:
       containers:
-        - image: dharnel/laravelapp:7.0
+        - image: dharnel/laravelapp:7.1
           name: my-laravel-app
           ports:
             - containerPort: 80
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 80
-              httpHeaders:
-               - name: Custom-Header
-                 value: Awesome
-            initialDelaySeconds: 3
-            periodSeconds: 3
+#          livenessProbe:
+#            httpGet:
+#              path: /healthz
+#              port: 80
+#              httpHeaders:
+#               - name: Custom-Header
+#                 value: Awesome
+#            initialDelaySeconds: 3
+#            periodSeconds: 3
           resources: {}
           volumeMounts:
             - mountPath: /var/www/html
-              name: my-laravel-app-claim0
+              name: my-laravel-app1
               subPath: html
             - mountPath: /var/www/laravel-realworld-example-app/vendor/
-              name: my-laravel-app-claim1
+              name: my-laravel-app
               subPath: laravel-realworld-example-app
       restartPolicy: Always
       volumes:
-        - name: my-laravel-app-claim0
-          persistentVolumeClaim:
-            claimName: my-laravel-app-claim0
-        - name: my-laravel-app-claim1
-          persistentVolumeClaim:
-            claimName: my-laravel-app-claim1
+        - name: my-laravel-app1
+          emptyDir:
+            medium: Memory
+        - name: my-laravel-app
+          emptyDir:
+            medium: Memory
 status: {}

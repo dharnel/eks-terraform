@@ -1,5 +1,5 @@
 # Local .terraform directories
- **/Deployment/terraform/.terraform/*
+ Deployment/terraform/.terraform/*
 
  Jenkins_server_creation/terraform/.terraform/
 
@@ -7,12 +7,8 @@
 
  Deployment/terraform/terraform.tfstate
 
- Deployment/kubernetes/blog/
 
  Jenkins_server_creation/terraform/.terraform.lock.hcl
-# ansible/instance-key.pem
-
-# ansible/ansible.cfg
 
  # .tfstate files
 *.tfstate

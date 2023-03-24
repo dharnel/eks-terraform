@@ -16,6 +16,7 @@ spec:
       dns01:
         route53:
           region: eu-west-2
+          hostedZoneID: Z08049042WK7C9WNPFDO
           accessKeyID: AKIATBF5UWBQJQG3QAN7
           secretAccessKeySecretRef:
             name: route53-secret

@@ -50,13 +50,13 @@ spec:
             - mountPath: /var/lib/mysql
               name: my-laravel-db
             - mountPath: /etc/mysql/my.cnf
-              name: mysql-claim1
+              name: mysql
       restartPolicy: Always
       volumes:
         - name: my-laravel-db
-          persistentVolumeClaim:
-            claimName: my-laravel-db
-        - name: mysql-claim1
-          persistentVolumeClaim:
-            claimName: mysql-claim1
+          emptyDir:
+            medium: Memory
+        - name: mysql
+          emptyDir:
+            medium: Memory
 status: {}
