@@ -20,11 +20,11 @@
 
 ## App Interface
 ### Laravel app
-![Screenshot from 2023-03-24 16-31-05](https://user-images.githubusercontent.com/68646090/227571121-fc8a3dbe-e501-4a2f-b5d6-1bd8fb39ed31.png)
-
-### sock-shop app 
 ![Screenshot from 2023-03-24 16-29-49](https://user-images.githubusercontent.com/68646090/227571130-9ccbb021-f29e-4633-b18f-57be05987cbf.png)
 
-### Grafana Dashboard
+### sock-shop app 
 ![Screenshot from 2023-03-24 16-29-26](https://user-images.githubusercontent.com/68646090/227571138-1daefd7f-6a1c-4a1e-887a-fe25775f3ad1.png)
+
+### Grafana Dashboard
+![Screenshot from 2023-03-24 16-31-05](https://user-images.githubusercontent.com/68646090/227571121-fc8a3dbe-e501-4a2f-b5d6-1bd8fb39ed31.png)
 
