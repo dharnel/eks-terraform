@@ -9,7 +9,9 @@
     * Sock-shop app - a microservice demo application, the repository can be found [here](https://github.com/dharnel/microservices-demo)
     * Laravel app - a real world example of laravel application,the repository can be found [here](https://github.com/dharnel/laravel-realworld-example-app)
     * Monitoring tools were also set up using prometheus and grafana
-    
+
+* I dockerized the laravel app and created a docker image from it which I used in created a kubernetes deployment. I used the kubernetes tool "Kompose" to create the deployments from a docker-compose file which I created.
+
 * I used an ingress to direct traffic to each application service which then directs the traffic to the pod. All the services were internal and they were used to communicate with the pod and receive traffic from the ingress.
 
 * For controlling internet traffic to the different apps, I made use of an Ingress-Nginx controller which creates a single load balancer and connects them to the different ingresses in each application namespace which reduced deployment cost that would have arrived from creating a load balancer with every service.
