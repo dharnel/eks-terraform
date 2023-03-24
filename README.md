@@ -1,4 +1,4 @@
-## Deployment to a kubernetes cluster using IAAC approach with a CI/CD pipeline
+# Deployment to a kubernetes cluster using IAAC approach with a CI/CD pipeline
 
 ### Summary of Project
 * I built the infrastructure required for this project using terraform on Amazon Web Service(AWS). The infrastructure involves a VPC, subnets, amazon elastic kubernetes service which contains the cluster and nodegroups for scaling the deployment and an Ec2 instance which I used to serve as my CI/CD server.
